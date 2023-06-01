@@ -2,6 +2,8 @@ from ui.ui import AddressBook
 
 book = AddressBook()
 
+print('book_init', book)
+
 # book = AddressBook()
 # book['Anna'] = '234567890'
 # book['Doris'] = '3245678908'

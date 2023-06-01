@@ -10,27 +10,8 @@ class AddressBook(UserDict):
         self.NUMBER_RECORDS = None
         self.value = 0
         self.file = 'book.bin'
-        self.book = open(self.file)
-        self.position = 0
-
-    def close(self):
-        self.book.close()
-
-    def read(self, size=1):
-        data = self.book.read(size)
-        self.position = self.book.tell()
-        return data
-
-    def __getstate__(self):
-        attributes = {self.data.__dict__}
-        # attributes['book'] = None
-        print(attributes)
-        return attributes
-
-    def __setstate__(self, state):
-        self.data.__dict__ = state
-        self.book = open(state['file'])
-        self.book.seek(state['position'])
+        # self.data = self.read_from_file(self.file)
+        print('self', self)
 
     def __next__(self):
         if self.value >= self.NUMBER_RECORDS:
@@ -51,10 +32,12 @@ class AddressBook(UserDict):
             print('No records found')
 
     def get_records(self):
-        if not self.data.items():
-            return
-
-        # self.read_from_file()
+        for key, value in self.data.items():
+            print(key.name, value)
+        # if not self.data.items():
+        #     return
+        # self.read_from_file(self.file)
+        # print('self.data', self.data)
 
     def search_record(self, key):
         print(self.data.get(key))
@@ -62,17 +45,29 @@ class AddressBook(UserDict):
 
     def add_record(self, record):
         self.data[record.name] = record.phone
-        # self.save_to_file()
+        self.save_to_file(self)
 
-    # def save_to_file(self):
-    #     with open('book.bin', 'ab') as book:
-    #         pickle.dump(self.data, book)
-    #
-    # #
-    # def read_from_file(self):
-    #     with open('book.bin', 'rb') as book:
-    #         for key, value in pickle.load(book).items():
-    #             print(key, value)
+    def save_to_file(self, data):
+        with open(self.file, 'wb') as book:
+            pickle.dump(data, book)
+
+    # def read_from_file(self, file):
+    #     with open(file, 'rb') as book:
+    #         unpacked = pickle.load(book)
+    #         print('unpacked', unpacked)
+    #         return unpacked
+    # for key, value in pickle.load(book).items():
+    #     print(key, value)
+
+    def __getstate__(self):
+        attributes = self.__dict__['data']
+        print('attributes', attributes)
+        return attributes
+
+    def __setstate__(self, state):
+        print('state', state)
+        self.__dict__['data'] = state
+        print('self.data', self.__dict__['data'])
 
 
 class Record:
