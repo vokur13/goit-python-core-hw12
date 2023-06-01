@@ -1,6 +1,7 @@
 from collections import UserDict
 from datetime import datetime, timedelta
 import re
+import pickle
 
 
 class AddressBook(UserDict):
@@ -8,6 +9,28 @@ class AddressBook(UserDict):
         super().__init__()
         self.NUMBER_RECORDS = None
         self.value = 0
+        self.file = 'book.bin'
+        self.book = open(self.file)
+        self.position = 0
+
+    def close(self):
+        self.book.close()
+
+    def read(self, size=1):
+        data = self.book.read(size)
+        self.position = self.book.tell()
+        return data
+
+    def __getstate__(self):
+        attributes = {self.data.__dict__}
+        # attributes['book'] = None
+        print(attributes)
+        return attributes
+
+    def __setstate__(self, state):
+        self.data.__dict__ = state
+        self.book = open(state['file'])
+        self.book.seek(state['position'])
 
     def __next__(self):
         if self.value >= self.NUMBER_RECORDS:
@@ -28,8 +51,10 @@ class AddressBook(UserDict):
             print('No records found')
 
     def get_records(self):
-        for key, value in self.data.items():
-            print(key.name, value)
+        if not self.data.items():
+            return
+
+        # self.read_from_file()
 
     def search_record(self, key):
         print(self.data.get(key))
@@ -37,6 +62,17 @@ class AddressBook(UserDict):
 
     def add_record(self, record):
         self.data[record.name] = record.phone
+        # self.save_to_file()
+
+    # def save_to_file(self):
+    #     with open('book.bin', 'ab') as book:
+    #         pickle.dump(self.data, book)
+    #
+    # #
+    # def read_from_file(self):
+    #     with open('book.bin', 'rb') as book:
+    #         for key, value in pickle.load(book).items():
+    #             print(key, value)
 
 
 class Record:
@@ -150,16 +186,18 @@ class Birthday(Field):
     def __str__(self):
         return self.__value
 
+# record = Record('Boris')
 
-record = Record('Boris')
+# phone = Phone()
+# phone[0] = '123456789'
+# phone[1] = '876544567'
+# print(phone[0], phone[1])
 
-phone = Phone()
-phone[0] = '123456789'
-phone[1] = '876544567'
-print(phone[0], phone[1])
+# birthday = Birthday()
+# birthday[0] = '22-12-1968'
+# print(birthday[0])
+# record.b_day = birthday[0]
+# record.days_to_birthday()
 
-birthday = Birthday()
-birthday[0] = '27-05-2000'
-print(birthday[0])
-record.b_day = birthday[0]
-record.days_to_birthday()
+# newbook = AddressBook()
+# newbook.add_record(record)
