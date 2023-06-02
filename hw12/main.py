@@ -1,5 +1,7 @@
+from commands import good_bye, close, hello, add, change, phone, show_all, exit_from, iterate, save_data, recovery_data, \
+    handle_filter
+
 from command_generator import command_generator
-from commands import good_bye, close, hello, add, change, phone, show_all, exit_from, iterate
 
 # from .commands import *
 
@@ -12,7 +14,10 @@ COMMANDS = {
     "change": change,
     "phone": phone,
     "show all": show_all,
-    'iterate': iterate
+    'iterate': iterate,
+    'save': save_data,
+    'rec': recovery_data,
+    'filter': handle_filter
 }
 
 

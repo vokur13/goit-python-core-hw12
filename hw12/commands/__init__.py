@@ -7,5 +7,7 @@ from .show_all import show_all
 from .change import change
 from .hello import hello
 from .iterate import iterate
+from .handle_data import save_data, recovery_data
+from .filter import handle_filter
 
 # __all__ = ['good_bye', 'show_all']

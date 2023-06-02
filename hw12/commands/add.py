@@ -14,4 +14,3 @@ def add(*args, **kwargs):
                 if arg[1:]:
                     record.add_phone(" ".join(arg[1:]))
                 book.add_record(record)
-                print('book', book)

@@ -1,6 +1,7 @@
 from collections import UserDict
 from datetime import datetime, timedelta
 import re
+from pathlib import Path
 import pickle
 
 
@@ -9,7 +10,7 @@ class AddressBook(UserDict):
         super().__init__()
         self.NUMBER_RECORDS = None
         self.value = 0
-        self.file = 'book.bin'
+        self.path = 'book.bin'
 
     def __next__(self):
         if self.value >= self.NUMBER_RECORDS:
@@ -32,10 +33,6 @@ class AddressBook(UserDict):
     def get_records(self):
         for key, value in self.data.items():
             print(key.name, value)
-        # if not self.data.items():
-        #     return
-        # self.read_from_file(self.file)
-        # print('self.data', self.data)
 
     def search_record(self, key):
         print(self.data.get(key))
@@ -43,30 +40,33 @@ class AddressBook(UserDict):
 
     def add_record(self, record):
         self.data[record.name] = record.phone
-        # self.save_to_file(self)
 
-    def save_to_file(self, data):
-        with open(self.file, 'wb') as book:
-            pickle.dump(data, book)
+    def save_to_file(self):
+        path = Path(self.path)
+        contents = pickle.dumps(self.data)
+        path.write_bytes(contents)
 
-    # def read_from_file(self, file):
-    #     with open(file, 'rb') as book:
-    #         unpacked = pickle.load(book)
-    #         print('unpacked', unpacked)
-    #         return unpacked
-    # for key, value in pickle.load(book).items():
-    #     print(key, value)
+    def read_from_file(self):
+        path = Path(self.path)
+        if path.exists():
+            contents = path.read_bytes()
+            self.data = pickle.loads(contents)
+            print('Address Book records are available to operate with. Enter your next command.')
+        else:
+            print('No data to recover')
 
-    def __getstate__(self):
-        attributes = self.__dict__['data']
-        attributes['fh'] = None
-        print('attributes', attributes)
-        return attributes
-
-    # def __setstate__(self, state):
-    #     print('state', state)
-    #     self.__dict__['data'] = state
-    #     print('self.data', self.__dict__['data'])
+    def find_filter(self, ch):
+        if ch.isalpha():
+            print('a key is alpha', ch)
+            for item in self.data:
+                if ch in str(item).casefold():
+                    print(item, self.data.get(item))
+        else:
+            print('a key is digit', ch)
+            for item in self.data:
+                for phone in self.data.get(item):
+                    if ch in str(phone).casefold():
+                        print(item, self.data.get(item))
 
 
 class Record:
