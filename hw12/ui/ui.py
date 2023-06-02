@@ -10,8 +10,6 @@ class AddressBook(UserDict):
         self.NUMBER_RECORDS = None
         self.value = 0
         self.file = 'book.bin'
-        # self.data = self.read_from_file(self.file)
-        print('self', self)
 
     def __next__(self):
         if self.value >= self.NUMBER_RECORDS:
@@ -45,7 +43,7 @@ class AddressBook(UserDict):
 
     def add_record(self, record):
         self.data[record.name] = record.phone
-        self.save_to_file(self)
+        # self.save_to_file(self)
 
     def save_to_file(self, data):
         with open(self.file, 'wb') as book:
@@ -61,13 +59,14 @@ class AddressBook(UserDict):
 
     def __getstate__(self):
         attributes = self.__dict__['data']
+        attributes['fh'] = None
         print('attributes', attributes)
         return attributes
 
-    def __setstate__(self, state):
-        print('state', state)
-        self.__dict__['data'] = state
-        print('self.data', self.__dict__['data'])
+    # def __setstate__(self, state):
+    #     print('state', state)
+    #     self.__dict__['data'] = state
+    #     print('self.data', self.__dict__['data'])
 
 
 class Record:

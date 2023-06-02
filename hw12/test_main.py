@@ -1,12 +1,28 @@
-import json
+import pickle
 
-# some_data = {'key': 'value', 2: [1, 2, 3], 'tuple': (5, 6), 'a': {'key': 'value'}}
-some_data = {'key': 'value'}
-file_name = 'test.json'
 
-with open(file_name, "r") as fh:
-    unpacked = json.load(fh)
-    some_data.update(unpacked)
+class Reader:
+    def __init__(self, file):
+        self.file = file
+        self.fh = open(self.file)
+        self.position = 0
 
-with open(file_name, "w") as fh:
-    json.dump(some_data, fh)
+    def close(self):
+        self.fh.close()
+
+    def read(self, size=1):
+        data = self.fh.read(size)
+        self.position = self.fh.tell()
+        return data
+
+    def __getstate__(self):
+        attributes = {**self.__dict__, 'fh': None}
+        return attributes
+
+    def __setstate__(self, value):
+        self.__dict__ = value
+        self.fh = open(value['file'])
+        self.fh.seek(value['position'])
+
+
+reader = Reader('test.bin')
